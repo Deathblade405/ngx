@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';  // Import HttpClientModule
 
 import { AppComponent } from './app.component';
 import { SafePipe } from './safe.pipe';
-import { FormsModule } from '@angular/forms';
 import { LOAD_WASM, NgxScannerQrcodeModule } from 'ngx-scanner-qrcode';
 
 LOAD_WASM().subscribe((res: any) => {
-  console.log('LOAD_WASM',res)
-})
+  console.log('LOAD_WASM', res);
+});
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ LOAD_WASM().subscribe((res: any) => {
   imports: [
     BrowserModule,
     FormsModule,
-    NgxScannerQrcodeModule
+    NgxScannerQrcodeModule,
+    HttpClientModule  // Add HttpClientModule here
   ],
   providers: [],
   bootstrap: [AppComponent]

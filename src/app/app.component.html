@@ -1,24 +1,34 @@
 <div class="container">
-  <h1> ngx-scanner-qrcode </h1>
+  <p class="center" style="font-size: medium; padding-top: 25px;"> Scan BigQR Code for Product Authentication</p>
+  
+  <div class="row justify-content-center">
+    <div class="col-xs-12 col-md-6 col-lg-4 col-xl-3 my-1 d-flex align-items-center">
+      <label class="form-label me-2" style="white-space: nowrap;">Batch Number</label>
+      
+      <input [(ngModel)]="batchNumber" placeholder="Enter Batch Number" />
 
-  <!-- devices -->
-  <div class="row">
+    </div>
+  </div>
+  
+
+
+  <!-- <div class="row">
     <div class="col-xs-12 col-md-6 col-lg-4 col-xl-3 my-1">
       <select #select1 (change)="action.playDevice(select1.value)" class="form-select form-select-md">
         <option [value]="null" selected>Select device</option>
         <option *ngFor="let c of action.devices.value; let i = index" [value]="c.deviceId" [selected]="i == action.deviceIndexActive">{{c.label}}</option>
       </select>
-    </div>
+    </div> -->
 
-    <div class="col-xs-12 col-md-6 col-lg-4 col-xl-3 my-1">
-      <select #select2 (change)="action.decode = select2.value" class="form-select form-select-md">
-        <option value="utf-8" [selected]="action.decode == 'utf-8'">UTF-8</option>
-        <option value="iso-8859-15" [selected]="action.decode == 'iso-8859-15'">ISO-8859-15</option>
-        <option value="windows-1252" [selected]="action.decode == 'windows-1252'">Windows-1252</option>
-        <option value="macintosh" [selected]="action.decode == 'macintosh'">Macintosh</option>
-      </select>
-    </div>
-  </div>
+      <!-- <div class="col-xs-12 col-md-6 col-lg-4 col-xl-3 my-1">
+        <select #select2 (change)="action.decode = select2.value" class="form-select form-select-md">
+          <option value="utf-8" [selected]="action.decode == 'utf-8'">UTF-8</option>
+          <option value="iso-8859-15" [selected]="action.decode == 'iso-8859-15'">ISO-8859-15</option>
+          <option value="windows-1252" [selected]="action.decode == 'windows-1252'">Windows-1252</option>
+          <option value="macintosh" [selected]="action.decode == 'macintosh'">Macintosh</option>
+        </select>
+      </div> -->
+  <!-- </div> -->
   
   <!-- ngx-scanner-qrcode -->
   <ngx-scanner-qrcode #action="scanner" [config]="config" (event)="onEvent($event, action)"></ngx-scanner-qrcode>
@@ -31,29 +41,29 @@
   <p *ngIf="action.isLoading">⌛ Loading...</p>
 
   <!-- start/stop -->
-  <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="action.isLoading">
+  <!-- <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="action.isLoading">
     <img *ngIf="!action.isStart" (click)="handle(action, 'start')" src="assets/images/camera-on.svg" width="30px"/>
     <img *ngIf="action.isStart" (click)="handle(action, 'stop')" src="assets/images/camera-off.svg" width="30px"/>
-  </button>
+  </button> -->
   
   <!-- play/pause -->
-  <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="handle(action, action.isPause ? 'play' : 'pause')">
+  <!-- <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="handle(action, action.isPause ? 'play' : 'pause')">
     <img [src]="action.isPause ? 'assets/images/play.svg ': 'assets/images/pause.svg'" width="30px"/>
-  </button>
+  </button> -->
 
-  <!-- isTorch -->
+  <!-- isTorch
   <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="action.isTorch = !action.isTorch; handle(action, 'torcher')">
     <img [src]="action.isTorch ? 'assets/images/flash-off.svg' : 'assets/images/flash-on.svg'" width="30px"/>
-  </button>
+  </button> -->
 
   <!-- download -->
-  <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="onDowload(action)">
+  <!-- <button class="btn" [class.btn-info]="!action.isStart" [class.btn-warning]="action.isStart" [disabled]="!action.isStart" (click)="onDowload(action)">
     <img src="assets/images/capture.svg" width="30px"/>
   </button>
-  <br>
+  <br> -->
 
   <!-- For select files -->
-  <input #file type="file" (change)="onSelects(file.files)" [multiple]="'multiple'" [accept]="'.jpg, .png, .gif, .jpeg'" class="btn btn-success my-2"/>
+  <!-- <input #file type="file" (change)="onSelects(file.files)" [multiple]="'multiple'" [accept]="'.jpg, .png, .gif, .jpeg'" class="btn btn-success my-2"/>
   <br>
   <input #file2 type="file" (change)="onSelects2(file2.files)" [multiple]="'multiple'" [accept]="'.jpg, .png, .gif, .jpeg'" class="btn btn-success my-2"/>
   <br>
@@ -75,27 +85,27 @@
   </div>
 
   <div *ngFor="let item of qrCodeResult">
-    <ngx-scanner-qrcode #actionFile="scanner" [src]="item.url" [config]="config" (event)="onEvent($event)"></ngx-scanner-qrcode>
+    <ngx-scanner-qrcode #actionFile="scanner" [src]="item.url" [config]="config" (event)="onEvent($event)"></ngx-scanner-qrcode> -->
     <!-- <p class="data">{{ actionFile.data | async }}</p> -->
-  </div>
+  <!-- </div> -->
  
-  <div *ngFor="let item of qrCodeResult2">
-    <img [src]="item.url | safe: 'url'" alt="" style="max-width: 100%">
+  <!-- <div *ngFor="let item of qrCodeResult2">
+    <img [src]="item.url | safe: 'url'" alt="" style="max-width: 100%"> -->
     <!-- <p class="data">{{ item | json }}</p> -->
-  </div>
+  <!-- </div> -->
 
-  <ngx-scanner-qrcode
+  <!-- <ngx-scanner-qrcode
     #actionFile="scanner"
     (event)="onEvent($event)"
-    [src]="'https://raw.githubusercontent.com/id1945/ngx-scanner-qrcode/master/supported-barcode-types.png'"
+  
     [config]="config"> 
-  </ngx-scanner-qrcode>
+  </ngx-scanner-qrcode> -->
   <!-- <p class="data">{{ actionFile.data | async }}</p> -->
 
   <!-- License -->
-  <p class="center"><a href="https://github.com/id1945/ngx-scanner-qrcode/blob/master/LICENSE">LGPL-2.1+ License</a></p>
+  <!-- <p class="center"><a href="https://github.com/id1945/ngx-scanner-qrcode/blob/master/LICENSE">LGPL-2.1+ License</a></p> -->
 
   <!-- Copyright -->
-  <p class="center">Author: DaiDH</p>
-  <p class="center">Copyright (C) 1991, 1999 Free Software Foundation, Inc.</p>
+  <p class="center">&copy; 2024 Scinova Scientifics<br>Powered by CIIRC</p><br>
+  <!-- <p class="center">Copyright (C) 1991, 1999 Free Software Foundation, Inc.</p> -->
 </div>

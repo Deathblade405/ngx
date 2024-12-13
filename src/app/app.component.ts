@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { ScannerQRCodeConfig, NgxScannerQrcodeService, ScannerQRCodeSelectedFiles, ScannerQRCodeResult, NgxScannerQrcodeComponent } from 'ngx-scanner-qrcode';
+import { DataService } from './data.service';
 
 @Component({
   selector: 'app-root',
@@ -8,63 +9,89 @@ import { ScannerQRCodeConfig, NgxScannerQrcodeService, ScannerQRCodeSelectedFile
 })
 export class AppComponent implements AfterViewInit {
 
-  // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia#front_and_back_camera
   public config: ScannerQRCodeConfig = {
     constraints: {
       video: {
         width: window.innerWidth
       },
     },
-    // canvasStyles: [
-    //   {
-    //     lineWidth: 1,
-    //     fillStyle: '#00950685',
-    //     strokeStyle: '#00950685',
-    //   },
-    //   {
-    //     font: '17px serif',
-    //     fillStyle: '#ff0000',
-    //     strokeStyle: '#ff0000',
-    //   }
-    // ],
   };
 
   public qrCodeResult: ScannerQRCodeSelectedFiles[] = [];
   public qrCodeResult2: ScannerQRCodeSelectedFiles[] = [];
   public percentage = 80;
   public quality = 100;
+  private isZoomed = false;
+
+  public batchNumber: string = '';  // Property to capture batch number from the input
 
   @ViewChild('action') action!: NgxScannerQrcodeComponent;
 
-  constructor(private qrcode: NgxScannerQrcodeService) { }
+  constructor(
+    private qrcode: NgxScannerQrcodeService,
+    private dataService: DataService
+  ) { }
 
   ngAfterViewInit(): void {
-    this.action.isReady.subscribe((res: any) => {
-      // this.handle(this.action, 'start');
+    this.action.isReady.subscribe(() => {
+      this.handle(this.action, 'start');
     });
   }
 
   public onEvent(e: ScannerQRCodeResult[], action?: any): void {
-    // e && action && action.pause();
     console.log(e);
+    if (e && e.length > 0 && e[0].value) {
+      const scannedText = e[0].value;
+
+      this.zoomToQRCode();
+
+      const urlPattern = /^(https?:\/\/[^\s/$.?#].[^\s]*)$/i;
+      if (urlPattern.test(scannedText)) {
+        window.open(scannedText, '_blank');
+      }
+
+      const payload = {
+        batch_number: this.batchNumber,  // Capture batch number from the input field
+        qr_data: scannedText,
+        scan_timestamp: new Date().toISOString(),
+        image_path: '',
+      };
+
+      this.sendScanDataToBackend(payload);
+    }
+  }
+
+  private sendScanDataToBackend(payload: any): void {
+    this.dataService.saveScan(payload).subscribe({
+      next: (response: any) => {
+        console.log('Scan data sent successfully:', response);
+      },
+      error: (error: any) => {
+        console.error('Error sending scan data:', error);
+      }
+    });
   }
 
   public handle(action: any, fn: string): void {
-    // Fix issue #27, #29
     const playDeviceFacingBack = (devices: any[]) => {
-      // front camera or back camera check here!
-      const device = devices.find(f => (/back|rear|environment/gi.test(f.label))); // Default Back Facing Camera
+      const device = devices.find(f => (/back|rear|environment/gi.test(f.label)));
       action.playDevice(device ? device.deviceId : devices[0].deviceId);
     }
 
     if (fn === 'start') {
-      action[fn](playDeviceFacingBack).subscribe((r: any) => console.log(fn, r), alert);
+      action[fn](playDeviceFacingBack).subscribe(
+        (r: any) => console.log(fn, r),
+        (error: any) => alert(error)
+      );
     } else {
-      action[fn]().subscribe((r: any) => console.log(fn, r), alert);
+      action[fn]().subscribe(
+        (r: any) => console.log(fn, r),
+        (error: any) => alert(error)
+      );
     }
   }
 
-  public onDowload(action: NgxScannerQrcodeComponent) {
+  public onDownload(action: NgxScannerQrcodeComponent) {
     action.download().subscribe(console.log, alert);
   }
 
@@ -82,16 +109,33 @@ export class AppComponent implements AfterViewInit {
   }
 
   public onGetConstraints() {
-    const constrains = this.action.getConstraints();
-    console.log(constrains);
+    const constraints = this.action.getConstraints();
+    console.log(constraints);
   }
-  
+
   public applyConstraints() {
-    const constrains = this.action.applyConstraints({
+    const constraints = this.action.applyConstraints({
       ...this.action.getConstraints(),
       width: 510
     });
-    console.log(constrains);
+    console.log(constraints);
   }
 
+  private zoomToQRCode() {
+    if (!this.isZoomed) {
+      const videoConstraints = this.config.constraints?.video ?? {};
+
+      const constraints = this.action.applyConstraints({
+        ...this.action.getConstraints(),
+        video: {
+          ...(typeof videoConstraints === 'object' ? videoConstraints : {}),
+          width: 320,
+          height: 320,
+        }
+      });
+
+      this.isZoomed = true;
+      console.log('Zoom applied:', constraints);
+    }
+  }
 }
